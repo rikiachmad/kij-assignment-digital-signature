@@ -31,12 +31,20 @@ Requirements to run this program is defined in the requirements.txt. Run ``` pip
 Clone this repo with
 ``` git clone https://github.com/rikiachmad/kij-assignment-digital-signature.git ```  
 <br />
-Full available command can be found using the ``` python3 main.py --help```.
+Full available command can be found using the
 <br />
-Generating key pairs can be achieved using ``` python3 main.py -x```. 
+``` python3 main.py --help```.
 <br />
-To sign the pdf documents this command can be used ``` python3 main.py -i [PDF_FILE_PATH] -s [PRIVATE_KEY_PATH] ```.
+Generating key pairs can be achieved using
 <br />
-And for verifying the signed document this command can be used ``` python3 main.py -i [PDF_FILE_PATH] -v [PUBLIC_KEY_PATH] ```. 
+``` python3 main.py -x```. 
+<br />
+To sign the pdf documents this command can be used
+<br />
+``` python3 main.py -i [PDF_FILE_PATH] -s [PRIVATE_KEY_PATH] ```
+<br />
+And for verifying the signed document this command can be used 
+<br />
+``` python3 main.py -i [PDF_FILE_PATH] -v [PUBLIC_KEY_PATH] ```. 
 <br />
 Note: In digital signature private key can only be used for encryption(signing) and public key can only be used for decryption(verifying).
