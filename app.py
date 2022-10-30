@@ -8,7 +8,6 @@ import argparse
 import pprint
 
 class App:
-    BUF_SIZE = 65536
     def __init__(self):
         self.parser = argparse.ArgumentParser(description="Available Options")
     
@@ -43,7 +42,7 @@ class App:
         f.close()
 
         if not sig:
-            print(f"No signature detected in {pdf_path}")
+            print(f"Signature not found in {pdf_path}")
             return
         try:
             decryptor.verify(hash, bytes.fromhex(sig.decode()))
@@ -89,7 +88,6 @@ class App:
         pub.write(key.public_key().export_key('PEM'))
         priv.close()
         pub.close()
-
 
     def parse_args(self):
         self.parser.add_argument('-i', '--input_pdf', dest='input_pdf', type=self.is_valid_pdf,
