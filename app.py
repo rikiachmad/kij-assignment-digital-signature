@@ -112,9 +112,3 @@ class App:
         if not path:
             raise ValueError(f"Invalid Path")
         return path
-
-    def is_valid_private_key(self,path):
-        pass
-
-    def is_valid_public_key(self,path):
-        pass
