@@ -5,7 +5,6 @@ from Crypto.Hash import SHA256
 from pathlib import Path
 import shutil
 import argparse
-import pprint
 
 class App:
     def __init__(self):

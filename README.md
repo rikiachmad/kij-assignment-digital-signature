@@ -14,7 +14,7 @@ In this assignment we create a python program that takes a PDF documents and cre
 
 **Signing PDF Documents**
 <br />
-The program uses the SHA256 to create hash value of the pdf document. After the hash value is generated, that hash value will be encrypted with private key using RSA Algorithm with the help of PyCrypto library. The encrypted hash value then embedded in the pdf documents without changing any content of the document itself.
+The program uses the SHA256 to create hash value of the pdf document. After the hash value is generated, that hash value will be encrypted with private key using RSA Algorithm with the help of PyCrypto library. The encrypted hash value then embedded in the pdf documents without changing any content of the document itself. New signed pdf file will created with [original-file-signed.pdf] naming.
 
 **Verifying Signature**
 <br />
