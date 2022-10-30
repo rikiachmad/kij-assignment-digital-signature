@@ -1,6 +1,5 @@
 from ast import dump
 from app import App
-from OpenSSL import crypto
 
 if __name__ == '__main__':
     app = App()
@@ -11,13 +10,14 @@ if __name__ == '__main__':
     elif args["sign_pdf"]:
         if not args["input_pdf"]:
             raise Exception("Input pdf file path.")
-        path = args["input_pdf"]
-        app.add_metadata(path)
-        print(f"Document {path} has been signed.")
-        # hash = app.get_hash(path)
-        # print(hash.hexdigest())
+        pdf_path = args["input_pdf"]
+        key_path = args["sign_pdf"]
+        app.sign_pdf(pdf_path, key_path)
+        print(f"Document {pdf_path} has been signed.")
 
     elif args["verify_pdf"]:
         if not args["input_pdf"]:
             raise Exception("Input pdf file path.")
-        path = args["input_pdf"]
+        pdf_path = args["input_pdf"]
+        key_path = args["verify_pdf"]
+        app.verify_pdf(pdf_path, key_path)

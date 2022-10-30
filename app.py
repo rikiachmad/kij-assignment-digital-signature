@@ -1,31 +1,78 @@
-from PyPDF2 import PdfFileReader, errors, PdfFileWriter
-from OpenSSL import crypto
+from PyPDF2 import PdfFileReader, errors
+from Crypto.PublicKey import RSA
+from Crypto.Signature import pkcs1_15
+from Crypto.Hash import SHA256
+from pathlib import Path
+import shutil
 import argparse
-import hashlib
 import pprint
-import os
 
 class App:
     BUF_SIZE = 65536
     def __init__(self):
         self.parser = argparse.ArgumentParser(description="Available Options")
     
-    def add_metadata(self, path, metadata="null"):
-        print("hash-1")
-        hash = self.get_hash(path).hexdigest()
-        print(hash)
-        # f = open(path, "ab+")
-        # f.write(b"tes123\n")
-        # f.close()
+    def import_public_key(self, path):
+        try:
+            pkey_str = open(path,"r").read()
+            public_key = RSA.importKey(pkey_str)
+        except:
+            raise Exception("Invalid key path")
+        return public_key
+
+    def import_private_key(self, path):
+        try:
+            pkey_str = open(path,"r").read()
+            private_key = RSA.importKey(pkey_str)
+        except:
+            raise Exception("Invalid key path")
+        return private_key
+
+    def verify_pdf(self, pdf_path, key_path):
+        hash = self.get_hash(pdf_path)
+        public_key = self.import_public_key(key_path)
+        decryptor = pkcs1_15.new(public_key)
+
+        f = open(pdf_path, "rb")
+        lines = f.readlines()
+        sig = ""
+        for line in lines:
+            if line.startswith(b"Signature"):
+                sig = line.split(b':')[1]
+                break
+        f.close()
+
+        if not sig:
+            print(f"No signature detected in {pdf_path}")
+            return
+        try:
+            decryptor.verify(hash, bytes.fromhex(sig.decode()))
+        except ValueError:
+            print("Signature not valid.")
+            return
+        print("Signature is valid.")
+
+    def sign_pdf(self, pdf_path, key_path):
+        hash = self.get_hash(pdf_path)
+        private_key = self.import_private_key(key_path)
+        encryptor = pkcs1_15.new(private_key)
+        encrypted_hash = encryptor.sign(hash)
+
+        new_pdf = Path(pdf_path).stem + '-signed.pdf'
+        shutil.copy(pdf_path, new_pdf)
+
+        f = open(new_pdf, "ab+")
+        f.write(b"\nSignature:")
+        f.write(encrypted_hash.hex().encode())
+        f.close()
 
     def get_hash(self, path):
-        sha256 = hashlib.sha256()
+        sha256 = SHA256.new()
         try:
             f = open(path, "rb")
             lines = f.readlines()
             for line in lines:
-                print(line)
-                if line == b"%%EOF" or line == b"%%EOF\n" or line == b"%%EOF\r\n":
+                if line == b"%%EOF" or line == b"%%EOF\n":
                     sha256.update(b"%%EOF")
                     break
                 sha256.update(line)
@@ -34,16 +81,15 @@ class App:
             raise Exception(errors)
         return sha256
 
-    def generate_keypair(self, type=crypto.TYPE_RSA, bits=4096):
-        pkey = crypto.PKey()
-        pkey.generate_key(type, bits)
-        with open('private_key.pem', 'wb') as private:
-            pk = crypto.dump_privatekey(crypto.FILETYPE_PEM, pkey)
-            private.write(pk)
-        # generate public key
-        with open('public_key.pem', 'wb') as public:
-            pk = crypto.dump_publickey(crypto.FILETYPE_PEM, pkey)
-            public.write(pk)
+    def generate_keypair(self):
+        key = RSA.generate(2048)
+        priv = open('private_key.pem','wb')
+        pub = open('public_key.pem', 'wb')
+        priv.write(key.export_key('PEM'))
+        pub.write(key.public_key().export_key('PEM'))
+        priv.close()
+        pub.close()
+
 
     def parse_args(self):
         self.parser.add_argument('-i', '--input_pdf', dest='input_pdf', type=self.is_valid_pdf,
