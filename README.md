@@ -31,19 +31,19 @@ Requirements to run this program is defined in the requirements.txt. Run ``` pip
 Clone this repo with
 ``` git clone https://github.com/rikiachmad/kij-assignment-digital-signature.git ```  
 <br />
-- To see full available commands
+See full available commands
 <br />
 ``` python3 main.py --help```
 <br />
-- Generating key pairs
+Generating key pairs
 <br />
 ``` python3 main.py -x```
 <br />
-- To sign the pdf documents
+To sign the pdf documents
 <br />
 ``` python3 main.py -i [PDF_FILE_PATH] -s [PRIVATE_KEY_PATH] ```
 <br />
-- And for verifying the signed document
+And for verifying the signed document
 <br />
 ``` python3 main.py -i [PDF_FILE_PATH] -v [PUBLIC_KEY_PATH] ```
 <br />
