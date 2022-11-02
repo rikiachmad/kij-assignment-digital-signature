@@ -3,7 +3,6 @@ from Crypto.PublicKey import RSA
 from Crypto.Signature import pkcs1_15
 from Crypto.Hash import SHA256
 from pathlib import Path
-import shutil
 import argparse
 
 class App:
@@ -57,11 +56,17 @@ class App:
         encrypted_hash = encryptor.sign(hash)
 
         new_pdf = Path(pdf_path).stem + '-signed.pdf'
-        shutil.copy(pdf_path, new_pdf)
 
-        f = open(new_pdf, "ab+")
-        f.write(b"\nSignature:")
-        f.write(encrypted_hash.hex().encode())
+        f = open(pdf_path, "rb")
+        nf = open(new_pdf, "wb")
+        lines = f.readlines()
+        for line in lines:
+            nf.write(line)
+            if line == b"%%EOF" or line == b"%%EOF\n":
+                break
+        nf.write(b"\nSignature:")
+        nf.write(encrypted_hash.hex().encode())
+        nf.close()
         f.close()
 
     def get_hash(self, path):
